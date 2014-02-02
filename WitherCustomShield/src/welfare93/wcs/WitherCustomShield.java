@@ -40,6 +40,27 @@ public class WitherCustomShield extends JavaPlugin  implements Listener{
 	private static List<Integer> dislog2=new ArrayList<Integer>();
 	private static int witherspawn=255;
 	private static boolean active=true;
+	private class WitherSpawnProtect
+	{
+		//from UP to limit=true, from DOWN to limit=false
+		private boolean updown;
+		//Y coords for spawn limit, negative value = always
+		private int coordY;
+		private String dimension; 
+		public WitherSpawnProtect()
+		{
+			
+		}
+		public boolean Protected(Location loc)
+		{
+			if(loc.getWorld().getName().equals(dimension))
+			{
+				if((loc.getY()>=coordY && updown)||(loc.getY()>=coordY && !updown))
+					return true;
+			}
+			return false;
+		}
+	}
     @Override
     public void onLoad(){
     	instance=this;
@@ -66,6 +87,7 @@ public class WitherCustomShield extends JavaPlugin  implements Listener{
     	firstrun();
         File conf = new File(this.getDataFolder() + "/config.yml");
         YamlConfiguration config = YamlConfiguration.loadConfiguration(conf);
+        
         disblocks=config.getStringList("WitherProtected.blocks");
         dislog1=config.getIntegerList("WitherProtected.log1");
         dislog2=config.getIntegerList("WitherProtected.log2");
@@ -80,6 +102,7 @@ public class WitherCustomShield extends JavaPlugin  implements Listener{
     	    f.mkdir();
     	f = new File(this.getDataFolder() + "/config.yml");
     	if(!f.exists())
+    	{
 			try {
 				f.createNewFile();
 		        YamlConfiguration config = YamlConfiguration.loadConfiguration(f);
@@ -98,10 +121,24 @@ public class WitherCustomShield extends JavaPlugin  implements Listener{
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+    	}
+    	else
+    	{
+	        YamlConfiguration config = YamlConfiguration.loadConfiguration(f);
+	        List<String> a=new ArrayList<String>();
+	        dislog1=new ArrayList<Integer>();
+	        dislog1.add(0);
+	        config.set("WitherProtected.blocks", a);
+	        config.set("WitherProtected.log1", dislog1);
+	        config.set("WitherSpawn.nether.upto", witherspawn);
+	        List<Integer> b=new ArrayList<Integer>();
+    		
+    	}
     }
 
     @EventHandler
-    public void onExplosionWither(EntityExplodeEvent event1) { if (event1.isCancelled() ||!active) return;
+    public void onExplosionWither(EntityExplodeEvent event1) { 
+    	if (event1==null || event1.isCancelled() ||event1.getEntity()==null || event1.blockList()==null ||!active) return;
       EntityType type = event1.getEntity().getType();
       if (type == EntityType.WITHER|| type==EntityType.WITHER_SKULL) {
         List<Block> blocks = new ArrayList<Block>();
@@ -142,7 +179,7 @@ public class WitherCustomShield extends JavaPlugin  implements Listener{
     @EventHandler
     public void WitherProjectile(EntityExplodeEvent event1)
     {
-    	if (event1.isCancelled() ||!active) return;
+    	if (event1==null || event1.isCancelled() ||event1.getEntity()==null || event1.blockList()==null ||!active) return;
         EntityType type = event1.getEntity().getType();
         if (type == EntityType.WITHER || type==EntityType.WITHER_SKULL) {
           List<Block> blocks = new ArrayList<Block>();
@@ -183,7 +220,7 @@ public class WitherCustomShield extends JavaPlugin  implements Listener{
     	} 
     @EventHandler
     public void WitherEatBlocks(EntityChangeBlockEvent event1) { 
-    	if (event1.isCancelled() ||!active) return;
+    	if (event1==null || event1.isCancelled() ||event1.getEntity()==null || event1.getBlock()==null ||!active) return;
     EntityType type = event1.getEntity().getType();
     if (type == EntityType.WITHER|| type==EntityType.WITHER_SKULL) {
     	
@@ -211,6 +248,7 @@ public class WitherCustomShield extends JavaPlugin  implements Listener{
      		 {
      			 event1.getBlock().setType(Material.AIR);
      	          event1.setCancelled(true);
+     	          
      		 }
      	 }
     }
