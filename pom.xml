@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>welfare93.wcs</groupId>
 	<artifactId>WitherCustomShield</artifactId>
-	<version>0.1.8-${buildNumber}</version>
+	<version>0.1.8</version>
 	<name>WitherCustomShield</name>
 
 	<repositories>
@@ -15,7 +15,6 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<buildNumber>0</buildNumber>
 	</properties>
 
 	<build>
@@ -46,30 +45,4 @@
 			<version>1.7.2-R0.2</version>
 		</dependency>
 	</dependencies>
-	
-	<!-- Build profiles -->
-	<profiles>
-		<profile>
-	        	<id>static_build_number</id>
-	        	<activation>
-	            		<property>
-	                		<name>!env.BUILD_NUMBER</name>
-	            		</property>
-	        	</activation>
-	        	<properties>
-	            		<buildNumber>0</buildNumber>
-	        	</properties>
-	    	</profile>
-	    	<profile>
-	        	<id>dynamic_build_number</id>
-	        	<activation>
-	            		<property>
-		                	<name>env.BUILD_NUMBER</name>
-	            		</property>
-	        	</activation>
-	        	<properties>
-	            		<buildNumber>${env.BUILD_NUMBER}</buildNumber>
-	        	</properties>
-	    	</profile>
-	</profiles>
 </project>
