@@ -29,17 +29,21 @@ import org.bukkit.entity.WitherSkull;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.material.Tree;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.BlockIterator;
 
 public class WitherCustomShield extends JavaPlugin  implements Listener{
 	public static WitherCustomShield instance;
@@ -155,7 +159,28 @@ public class WitherCustomShield extends JavaPlugin  implements Listener{
     	}
     	}
     }
-    
+    @EventHandler
+    public void onProjectileHit(ProjectileHitEvent event) {
+        if(!(event.getEntity() instanceof Arrow)) //Remove to check all projectiles
+            return;
+
+        Arrow arrow = (Arrow)event.getEntity() ;
+        if((arrow.getShooter() instanceof Player)) //Making sure the shooter is a player
+            return;
+
+        World world = arrow.getWorld();
+        BlockIterator iterator = new BlockIterator(world, arrow.getLocation().toVector(), arrow.getVelocity().normalize(), 0, 4);
+        Block hitBlock = null;
+
+        while(iterator.hasNext()) {
+            hitBlock = iterator.next();
+            if(hitBlock.getType()!=Material.AIR) //Check all non-solid blockid's here.
+                break;
+        }
+        if(hitBlock.getType()==Material.TNT && arrow.getFireTicks()<=0)
+        	event.getEntity().remove();
+
+    }
 
     @EventHandler
     public void onExplosionWither(EntityExplodeEvent event1) { 
