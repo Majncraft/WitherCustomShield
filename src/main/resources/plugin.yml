@@ -1,6 +1,5 @@
 name: ${project.name}
 version: ${project.version}
-description: ${project.description}
 author: welfare93
 website: https://github.com/Majncraft/WitherCustomShield
 main: welfare93.wcs.WitherCustomShield
