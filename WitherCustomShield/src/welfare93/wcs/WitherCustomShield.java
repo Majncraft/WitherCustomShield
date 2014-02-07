@@ -4,14 +4,20 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Server;
+import org.bukkit.TreeSpecies;
+import org.bukkit.TreeType;
 import org.bukkit.World;
 import org.bukkit.WorldType;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -28,6 +34,8 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.world.StructureGrowEvent;
+import org.bukkit.material.Tree;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
@@ -135,6 +143,19 @@ public class WitherCustomShield extends JavaPlugin  implements Listener{
     		
     	}
     }
+    @EventHandler
+    public void onStructureGrow(StructureGrowEvent event)
+    {
+    	if(event.getSpecies()==TreeType.DARK_OAK)
+    	{
+		for(BlockState a:event.getBlocks())
+    	{
+    		if(a.getBlock().getType()==Material.BEDROCK)
+    			a.setType(Material.BEDROCK);
+    	}
+    	}
+    }
+    
 
     @EventHandler
     public void onExplosionWither(EntityExplodeEvent event1) { 
@@ -156,14 +177,15 @@ public class WitherCustomShield extends JavaPlugin  implements Listener{
          if(a.getType().equals(Material.LOG))
         	 for(int b:dislog1)
         	 {
+        		 ((Tree) a).getSpecies().compareTo(TreeSpecies.BIRCH);
         		 if(a.getData()==b)
-        	 blocks.add(a);
+        			 blocks.add(a);
         	 }
          else if(a.getType().equals(Material.LOG_2))
         	 for(int b:dislog2)
         	 {
         		 if(a.getData()==b)
-        	 blocks.add(a);
+        			 blocks.add(a);
         	 }
          
         	 
